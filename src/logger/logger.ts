@@ -32,7 +32,7 @@ export class Logger {
   private instance: bunyan;
 
   private constructor(loggerName: string) {
-    const newLogger: bunyan = createLogger({
+    const newLogger: any = createLogger({
       name: loggerName,
       streams: [
         {
