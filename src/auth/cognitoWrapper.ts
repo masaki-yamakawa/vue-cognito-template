@@ -19,11 +19,11 @@ export class CognitoWrapper {
     ? process.env.VUE_APP_COGNITO_CLIENT_ID
     : "";
 
-  private currentUser: any = null;
+  // private currentUser: any = null;
   private userPool: any = null;
-  private options: any = null;
+  // private options: any = null;
 
-  public constructor(config: any) {
+  private constructor(config: any) {
     this.userPool = new CognitoUserPool({
       UserPoolId: this.userPoolId,
       ClientId: this.clientId,
@@ -48,4 +48,11 @@ export class CognitoWrapper {
       null
     );
   }
+
+  public async confirmation(username: string, confirmationCode: string) {
+    const userData = { Username: username, Pool: this.userPool };
+    const cognitoUser = new CognitoUser(userData);
+    return await promisify(cognitoUser.confirmRegistration).bind(cognitoUser)(confirmationCode, true);
+  }
+
 }
