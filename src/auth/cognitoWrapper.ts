@@ -10,7 +10,7 @@ export class CognitoWrapper {
   public static getInstance(): CognitoWrapper {
     return this.instance;
   }
-  private static instance: CognitoWrapper = new CognitoWrapper("");
+  private static instance: CognitoWrapper = new CognitoWrapper();
 
   private readonly userPoolId: string = process.env.VUE_APP_COGNITO_USER_POOL_ID
     ? process.env.VUE_APP_COGNITO_USER_POOL_ID
@@ -19,18 +19,20 @@ export class CognitoWrapper {
     ? process.env.VUE_APP_COGNITO_CLIENT_ID
     : "";
 
-  // private currentUser: any = null;
   private userPool: any = null;
-  // private options: any = null;
 
-  private constructor(config: any) {
+  private constructor() {
     this.userPool = new CognitoUserPool({
       UserPoolId: this.userPoolId,
       ClientId: this.clientId,
     });
   }
 
-  public async signUp(userId: string, password: string, mail: string) {
+  public async signUp(
+    userId: string,
+    password: string,
+    mail: string
+  ): Promise<any> {
     const name = { Name: "name", Value: userId };
     const email = { Name: "email", Value: mail };
     const now = Math.floor(new Date().getTime() / 1000);
@@ -49,10 +51,40 @@ export class CognitoWrapper {
     );
   }
 
-  public async confirmation(username: string, confirmationCode: string) {
+  public async confirmation(
+    username: string,
+    confirmationCode: string
+  ): Promise<any> {
     const userData = { Username: username, Pool: this.userPool };
     const cognitoUser = new CognitoUser(userData);
-    return await promisify(cognitoUser.confirmRegistration).bind(cognitoUser)(confirmationCode, true);
+
+    return await promisify(cognitoUser.confirmRegistration).bind(cognitoUser)(
+      confirmationCode,
+      true
+    );
   }
 
+  public async signIn(username: string, password: string): Promise<any> {
+    const userData = { Username: username, Pool: this.userPool };
+    const cognitoUser = new CognitoUser(userData);
+    const authenticationData = { Username: username, Password: password };
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: (result: any) => {
+          resolve(result);
+        },
+        onFailure: (err: any) => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  public async signout(): Promise<void> {
+    if (this.userPool.getCurrentUser()) {
+      this.userPool.getCurrentUser().signOut();
+    }
+  }
 }

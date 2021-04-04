@@ -4,7 +4,7 @@
       <v-flex xs5 mt-5>
         <v-card>
           <v-card-text>
-            <v-form ref="form" v-model="valid" lazy-validation>
+            <v-form ref="form" lazy-validation>
               <v-text-field
                 v-model="userId"
                 :counter="15"
@@ -13,12 +13,14 @@
                 required
               />
               <v-text-field
-                v-model="confirmationCode"
-                label="Confirmation Code"
+                v-model="password"
+                type="password"
+                :counter="20"
+                label="Password"
                 required
               />
 
-              <v-btn @click="confirmCode">Confirm</v-btn>
+              <v-btn @click="signIn">Signin</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -33,31 +35,29 @@ import { CognitoWrapper } from "../auth/cognitoWrapper";
 import { Logger } from "../logger/logger";
 
 @Component
-export default class ConfirmationCode extends Vue {
-  private valid = true;
-
+export default class Signin extends Vue {
   private userId = "";
   private userIdRules = [
     (v: string) => !!v || "User ID is required",
     (v: string) =>
       (v && v.length <= 15) || "User ID must be less than 15 characters",
   ];
-  private confirmationCode = "";
+  private password = "";
 
-  private async confirmCode() {
-    if (this.userId && this.confirmationCode) {
+  private async signIn() {
+    if (this.userId && this.password) {
       try {
         Logger.getLogger().info(
-          `ConfirmCode :userId=${this.userId}, confirmationCode=${this.confirmationCode}`
+          `SignIn :userId=${this.userId}, password=${this.password}`
         );
-        const result = await CognitoWrapper.getInstance().confirmation(
+        const result = await CognitoWrapper.getInstance().signIn(
           this.userId,
-          this.confirmationCode
+          this.password
         );
-        Logger.getLogger().info(`ConfirmCode result:${JSON.stringify(result)}`);
-        this.$router.push("/signin");
+        Logger.getLogger().info(`SignIn result:${JSON.stringify(result)}`);
+        this.$router.push("/");
       } catch (err) {
-        Logger.getLogger().error(`ConfirmCode failed: ${JSON.stringify(err)}`);
+        Logger.getLogger().error(`SignIn failed: ${JSON.stringify(err)}`);
       }
     }
   }

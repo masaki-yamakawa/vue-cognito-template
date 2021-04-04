@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import ConfirmationCode from "../views/ConfirmationCode.vue";
 import Home from "../views/Home.vue";
+import Signin from "../views/Signin.vue";
 import Signup from "../views/Signup.vue";
 
 Vue.use(VueRouter);
@@ -16,6 +17,11 @@ const routes: Array<RouteConfig> = [
     path: "/confcode",
     name: "ConfirmationCode",
     component: ConfirmationCode,
+  },
+  {
+    path: "/signin",
+    name: "Signin",
+    component: Signin,
   },
   {
     path: "/",

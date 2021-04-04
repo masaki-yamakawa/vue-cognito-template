@@ -11,7 +11,7 @@ export class Logger {
     }
     return logger.instance;
   }
-  private static loggers: { [key: string]: any } = {};
+  private static loggers: { [key: string]: Logger } = {};
 
   private readonly consoleLogLevel: bunyan.LogLevelString = process.env
     .VUE_APP_CONSOLE_LOG_LEVEL
