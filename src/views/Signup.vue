@@ -2,7 +2,7 @@
   <v-container text-xs-center>
     <v-layout row wrap justify-center>
       <v-flex xs5 mt-5>
-        <v-card max-width="500">
+        <v-card>
           <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
@@ -107,6 +107,7 @@ export default class Signup extends Vue {
           this.email
         );
         Logger.getLogger().info(`SignUp result:${JSON.stringify(result)}`);
+        this.$router.push("/confcode");
       } catch (err) {
         Logger.getLogger().error(`SignUp failed: ${JSON.stringify(err)}`);
       }
